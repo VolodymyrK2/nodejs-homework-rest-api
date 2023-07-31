@@ -1,12 +1,19 @@
 const { HttpError } = require('../helpers');
 
-const validateBody = (validator) => {
+const validateBody = (schema, isPatch) => {
+  let errorMessage = 'missing fields';
+  if (isPatch) {
+    errorMessage = 'missing field favorite';
+  }
   const func = (req, res, next) => {
-    const { name, email, phone } = req.body;
-    if (!name && !email && !phone) {
-      next(HttpError(400, 'missing fields'));
+    const {
+      name, email, phone, favorite
+    } = req.body;
+
+    if (!name && !email && !phone && (favorite === undefined)) {
+      next(HttpError(400, errorMessage));
     }
-    const { error } = validator(req.body);
+    const { error } = schema.validate(req.body);
     if (error) {
       error.details.forEach((err) => {
         if (err.type.includes('any.required')) {
@@ -21,4 +28,6 @@ const validateBody = (validator) => {
   return func;
 };
 
-module.exports = validateBody;
+module.exports = {
+  validateBody
+};
