@@ -4,10 +4,10 @@ const validateBody = (schema, isPatch = false) => {
   const errorMessage = isPatch ? 'missing field favorite' : 'missing fields';
   const func = (req, res, next) => {
     const {
-      name, email, phone, favorite, password
+      name, email, phone, favorite, password, subscription
     } = req.body;
 
-    if (!name && !email && !phone && (favorite === undefined) && !password) {
+    if (!name && !email && !phone && (favorite === undefined) && !password && !subscription) {
       next(HttpError(400, errorMessage));
     }
     const { error } = schema.validate(req.body);
